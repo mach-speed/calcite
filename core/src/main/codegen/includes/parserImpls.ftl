@@ -32,3 +32,22 @@
     }
   }
 -->
+
+/** Parses the ">>" operator used in Ha3SQL LeftMultiJoin */
+void LoopEquals(List<Object> list, ExprContext exprContext, Span s) :
+{
+}
+{
+    <LOOP_EQUALS> {
+        checkNonQueryExpression(exprContext);
+        list.add(new SqlParserUtil.ToTreeListItem(Ha3SqlOperatorTable.LOOP_EQUALS, s.pos()));
+    }
+    Expression2b(ExprContext.ACCEPT_SUB_QUERY, list)
+}
+
+JoinType LeftMultiJoin() :
+{
+}
+{
+    <LEFT> <MULTI> <JOIN> { return JoinType.LEFT_MULTI_JOIN; }
+}

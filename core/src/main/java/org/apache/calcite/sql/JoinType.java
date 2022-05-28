@@ -55,6 +55,12 @@ public enum JoinType implements Symbolizable {
   LEFT_SEMI_JOIN,
 
   /**
+   * Left Multi join.
+   * make right fields to sequence
+   */
+  LEFT_MULTI_JOIN,
+
+  /**
    * Comma join: the good old-fashioned SQL <code>FROM</code> clause,
    * where table expressions are specified with commas between them, and
    * join conditions are specified in the <code>WHERE</code> clause.

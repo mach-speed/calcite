@@ -3160,6 +3160,8 @@ public class SqlToRelConverter {
       return JoinRelType.FULL;
     case LEFT:
       return JoinRelType.LEFT;
+    case LEFT_MULTI_JOIN:
+      return JoinRelType.LEFT_MULTI;
     case RIGHT:
       return JoinRelType.RIGHT;
     default:

@@ -30,6 +30,7 @@ data: {
       "org.apache.calcite.sql.SqlCreate",
       "org.apache.calcite.sql.parser.parserextensiontesting.SqlCreateTable",
       "org.apache.calcite.sql.parser.parserextensiontesting.SqlUploadJarNode"
+      "org.apache.calcite.sql.parser.Ha3SqlOperatorTable"
     ]
 
     # List of new keywords. Example: "DATABASES", "TABLES". If the keyword is
@@ -37,7 +38,28 @@ data: {
     keywords: [
       "UPLOAD"
       "JAR"
+      "MULTI"
     ]
+
+    nonReservedKeywordsToAdd: [
+      "MULTI"
+    ]
+
+  # List of additional join types. Each is a method with no arguments.
+  # Example: "LeftSemiJoin".
+  joinTypes: [
+    "LeftMultiJoin"
+  ]
+
+  binaryOperatorsTokens: [
+    "< LOOP_EQUALS: \">>\" >"
+  ]
+
+  # Binary operators initialization.
+  # Example: "InfixCast".
+  extraBinaryExpressions: [
+    "LoopEquals"
+  ]
 
     # List of methods for parsing custom SQL statements.
     # Return type of method implementation should be 'SqlNode'.

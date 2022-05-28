@@ -229,6 +229,10 @@ public class SqlJoin extends SqlCall {
       case RIGHT:
         writer.sep(join.isNatural() ? "NATURAL RIGHT JOIN" : "RIGHT JOIN");
         break;
+      case LEFT_MULTI_JOIN:
+        writer.sep(join.isNatural() ? "NATURAL LEFT MULTI JOIN"
+            : "LEFT MULTI JOIN");
+        break;
       default:
         throw Util.unexpected(join.getJoinType());
       }

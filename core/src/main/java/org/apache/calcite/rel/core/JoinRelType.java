@@ -35,6 +35,11 @@ public enum JoinRelType {
   LEFT,
 
   /**
+   * LeftMultiJoin.
+   */
+  LEFT_MULTI,
+
+  /**
    * Right-outer join.
    */
   RIGHT,
