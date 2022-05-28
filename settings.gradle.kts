@@ -67,6 +67,7 @@ include(
     "elasticsearch",
     "example:csv",
     "example:function",
+    "example:ha3",
     "file",
     "geode",
     "innodb",
