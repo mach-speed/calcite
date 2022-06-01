@@ -25,7 +25,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public class SqlArrayWrapperOperator extends SqlOperator {
   public SqlArrayWrapperOperator() {
-    super("ARRAY_WRAPPER", SqlKind.ARRAY_AGG, 95, true, null, null, null);
+    super("ARRAY_WRAPPER", SqlKind.ARRAY_WRAPPER, 95, true, null, null, null);
   }
 
   @Override public SqlSyntax getSyntax() {

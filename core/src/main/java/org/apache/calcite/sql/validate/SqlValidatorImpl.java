@@ -2331,9 +2331,9 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
           || expr.getKind() == SqlKind.VALUES
           || expr.getKind() == SqlKind.UNNEST
           && (((SqlCall) expr).operand(0).getKind()
-                  == SqlKind.ARRAY_VALUE_CONSTRUCTOR
-              || ((SqlCall) expr).operand(0).getKind()
-                  == SqlKind.MULTISET_VALUE_CONSTRUCTOR);
+          == SqlKind.ARRAY_VALUE_CONSTRUCTOR
+          || ((SqlCall) expr).operand(0).getKind()
+          == SqlKind.MULTISET_VALUE_CONSTRUCTOR);
       newExpr =
           registerFrom(
               parentScope,
@@ -2517,7 +2517,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         return registerFrom(parentScope, usingScope, register, node,
             enclosingNode, alias, extendList, forceNullable, true);
       }
-    // fall through
+      // fall through
     case SELECT:
     case UNION:
     case INTERSECT:
@@ -2617,6 +2617,30 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       scopes.put(node, usingScope);
       return newNode;
 
+    case ARRAY_WRAPPER:
+      SqlArrayWrapper wrapper = (SqlArrayWrapper) node;
+      ArrayWrapperScope arrayWrapperScope = new ArrayWrapperScope(parentScope, usingScope, wrapper);
+      ArrayWrapperNamespace arrayWrapperNamespace = new ArrayWrapperNamespace(this, enclosingNode
+          , wrapper);
+      registerNamespace(usingScope, alias, arrayWrapperNamespace, false);
+      scopes.put(wrapper, arrayWrapperScope);
+
+      SqlNode wrapperInput = wrapper.getInput();
+      newOperand = registerFrom(
+          parentScope,
+          arrayWrapperScope,
+          register,
+          wrapperInput,
+          enclosingNode,
+          null,
+          extendList,
+          forceNullable,
+          lateral
+      );
+      if (newOperand != wrapperInput) {
+        wrapper.setOperand(0,newOperand);
+      }
+      return newNode;
     default:
       throw Util.unexpected(kind);
     }
@@ -3372,7 +3396,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     case UNNEST:
       validateUnnest((SqlCall) node, scope, targetRowType);
       break;
-    case Array_Wrapper:
+    case ARRAY_WRAPPER:
       validateArrayWrapper((SqlArrayWrapper) node, scope, targetRowType);
       break;
     default:
