@@ -20,7 +20,10 @@ import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.rel.type.RelDataTypeFactoryImpl;
 import org.apache.calcite.rel.type.RelDataTypeFamily;
+import org.apache.calcite.rel.type.RelDataTypeField;
+import org.apache.calcite.rel.type.RelDataTypeFieldImpl;
 import org.apache.calcite.rel.type.RelDataTypeSystem;
+import org.apache.calcite.rel.type.RelRecordType;
 import org.apache.calcite.sql.SqlCollation;
 import org.apache.calcite.sql.SqlIntervalQualifier;
 import org.apache.calcite.util.Util;
@@ -28,6 +31,7 @@ import org.apache.calcite.util.Util;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
@@ -110,6 +114,21 @@ public class SqlTypeFactoryImpl extends RelDataTypeFactoryImpl {
     assert maxCardinality == -1;
     ArraySqlType newType = new ArraySqlType(elementType, false);
     return canonize(newType);
+  }
+
+  @Override public RelDataType wrapEachField(RelDataType type) {
+    List<RelDataTypeField> fieldList = type.getFieldList();
+    List<RelDataTypeField> out = new ArrayList<>(fieldList.size());
+    for (RelDataTypeField field : fieldList) {
+      RelDataType eleType = createArrayType(createTypeWithNullability(field.getType(), true), -1);
+      RelDataTypeFieldImpl nField = new RelDataTypeFieldImpl(
+          field.getName(),
+          field.getIndex(),
+          eleType);
+      out.add(nField);
+    }
+    RelRecordType result = new RelRecordType(type.getStructKind(), out, true);
+    return canonize(result);
   }
 
   @Override public RelDataType createMapType(
@@ -280,8 +299,8 @@ public class SqlTypeFactoryImpl extends RelDataTypeFactoryImpl {
         type = typeName.allowsPrecScale(true, true)
             ? createSqlType(typeName, type.getPrecision(), type.getScale())
             : typeName.allowsPrecScale(true, false)
-            ? createSqlType(typeName, type.getPrecision())
-            : createSqlType(typeName);
+                ? createSqlType(typeName, type.getPrecision())
+                : createSqlType(typeName);
         type = createTypeWithNullability(type, originalType.isNullable());
       }
 
@@ -428,8 +447,8 @@ public class SqlTypeFactoryImpl extends RelDataTypeFactoryImpl {
               assert precision <= maxPrecision;
               assert precision > 0
                   || (resultType.getSqlTypeName() == SqlTypeName.DECIMAL
-                      && precision == 0
-                      && scale == 0);
+                  && precision == 0
+                  && scale == 0);
 
               resultType =
                   createSqlType(
@@ -568,8 +587,10 @@ public class SqlTypeFactoryImpl extends RelDataTypeFactoryImpl {
     return type;
   }
 
-  /** The unknown type. Similar to the NULL type, but is only equal to
-   * itself. */
+  /**
+   * The unknown type. Similar to the NULL type, but is only equal to
+   * itself.
+   */
   static class UnknownSqlType extends BasicSqlType {
     UnknownSqlType(RelDataTypeFactory typeFactory) {
       this(typeFactory.getTypeSystem(), false);

@@ -16,16 +16,27 @@
  */
 package org.apache.calcite.sql.fun;
 
-import com.google.common.collect.ImmutableList;
-
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.rel.type.RelDataTypeField;
-import org.apache.calcite.sql.*;
+import org.apache.calcite.sql.ExplicitOperatorBinding;
+import org.apache.calcite.sql.SqlBinaryOperator;
+import org.apache.calcite.sql.SqlCall;
+import org.apache.calcite.sql.SqlCallBinding;
+import org.apache.calcite.sql.SqlKind;
+import org.apache.calcite.sql.SqlNode;
 import org.apache.calcite.sql.parser.Ha3SqlOperatorTable;
-import org.apache.calcite.sql.type.*;
+import org.apache.calcite.sql.type.ArraySqlType;
+import org.apache.calcite.sql.type.ComparableOperandTypeChecker;
+import org.apache.calcite.sql.type.InferTypes;
+import org.apache.calcite.sql.type.OperandTypes;
+import org.apache.calcite.sql.type.ReturnTypes;
+import org.apache.calcite.sql.type.SqlTypeName;
+import org.apache.calcite.sql.type.SqlTypeUtil;
 import org.apache.calcite.sql.validate.SqlValidator;
 import org.apache.calcite.sql.validate.SqlValidatorScope;
+
+import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
@@ -42,8 +53,8 @@ public class SqlLoopEqualsOperator extends SqlBinaryOperator {
   }
 
 
-  @Override
-  public RelDataType deriveType(SqlValidator validator, SqlValidatorScope scope, SqlCall call) {
+  @Override public RelDataType deriveType(
+      SqlValidator validator, SqlValidatorScope scope, SqlCall call) {
     final List<SqlNode> operands = call.getOperandList();
     assert operands.size() == 2;
     final SqlNode left = operands.get(0);

@@ -121,6 +121,9 @@ public interface RelDataTypeFactory {
       RelDataType elementType,
       long maxCardinality);
 
+  RelDataType wrapEachField(
+      RelDataType type);
+
   /**
    * Creates a map type. Maps are unordered collections of key/value pairs.
    *

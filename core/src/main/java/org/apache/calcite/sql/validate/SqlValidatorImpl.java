@@ -42,6 +42,7 @@ import org.apache.calcite.sql.JoinType;
 import org.apache.calcite.sql.SqlAccessEnum;
 import org.apache.calcite.sql.SqlAccessType;
 import org.apache.calcite.sql.SqlAggFunction;
+import org.apache.calcite.sql.SqlArrayWrapper;
 import org.apache.calcite.sql.SqlBasicCall;
 import org.apache.calcite.sql.SqlCall;
 import org.apache.calcite.sql.SqlCallBinding;
@@ -3371,6 +3372,9 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     case UNNEST:
       validateUnnest((SqlCall) node, scope, targetRowType);
       break;
+    case Array_Wrapper:
+      validateArrayWrapper((SqlArrayWrapper) node, scope, targetRowType);
+      break;
     default:
       validateQuery(node, scope, targetRowType);
       break;
@@ -3379,6 +3383,28 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     // Validate the namespace representation of the node, just in case the
     // validation did not occur implicitly.
     getNamespaceOrThrow(node, scope).validate(targetRowType);
+  }
+
+  /**
+   * deal with a ArrayWrapper Node.
+   * @param wrapper sqlNode
+   * @param scope scope
+   * @param targetRowType targetRowType
+   */
+  private void validateArrayWrapper(
+      SqlArrayWrapper wrapper, SqlValidatorScope scope, RelDataType targetRowType) {
+    SqlNode input = wrapper.getInput();
+    SqlValidatorScope wrapperScope = getScopeOrThrow(wrapper);
+    // not correct result type, need to replace
+    validateFrom(input, targetRowType, wrapperScope);
+
+    RelDataType inputRowType = getNamespaceOrThrow(input).getRowType();
+    RelDataType outputRowType = typeFactory.wrapEachField(inputRowType);
+    getNamespace(wrapper).validate(outputRowType);
+//    wrapperScope.setRowType(outputRowType);
+//    getNamespace(wrapper).setRowType(outputRowType);
+
+
   }
 
   protected void validateOver(SqlCall call, SqlValidatorScope scope) {
@@ -3499,6 +3525,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       // fall through
     case INNER:
     case LEFT:
+    case LEFT_MULTI_JOIN:
     case RIGHT:
     case FULL:
       if ((condition == null) && !natural) {

@@ -51,3 +51,17 @@ JoinType LeftMultiJoin() :
 {
     <LEFT> <MULTI> <JOIN> { return JoinType.LEFT_MULTI_JOIN; }
 }
+
+
+/** Parses an ARRAY_WRAPPER clause following a table expression. */
+SqlNode ArrayWrapper(SqlNode tableRef) :
+{
+    Span s;
+}
+{
+    <ARRAY_WRAPPER>
+    {
+        s = span();
+        return new SqlArrayWrapper(s.end(this), tableRef);
+    }
+}

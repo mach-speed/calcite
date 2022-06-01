@@ -2191,6 +2191,10 @@ SqlNode TableRef2(boolean lateral) :
         tableRef = Unpivot(tableRef)
     ]
     [
+        LOOKAHEAD(1)
+        tableRef = ArrayWrapper(tableRef)
+    ]
+    [
         [ <AS> ] alias = SimpleIdentifier()
         [ columnAliasList = ParenthesizedSimpleIdentifierList() ]
         {

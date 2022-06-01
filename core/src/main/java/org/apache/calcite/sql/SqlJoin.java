@@ -27,6 +27,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.List;
 
+import static org.apache.calcite.sql.JoinType.LEFT_MULTI_JOIN;
+
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -66,6 +68,11 @@ public class SqlJoin extends SqlCall {
     this.left = left;
     this.natural = requireNonNull(natural, "natural");
     this.joinType = requireNonNull(joinType, "joinType");
+//    if (joinType.toString().equals(LEFT_MULTI_JOIN.toString())) {
+//      this.right = new SqlArrayWrapper(pos, right);
+//    } else {
+//      this.right = right;
+//    }
     this.right = right;
     this.conditionType = requireNonNull(conditionType, "conditionType");
     this.condition = condition;

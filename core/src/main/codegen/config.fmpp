@@ -52,16 +52,19 @@ data: {
     ]
   imports: [
     "org.apache.calcite.sql.parser.Ha3SqlOperatorTable"
+    "org.apache.calcite.sql.SqlArrayWrapper"
   ]
 
   # List of new keywords. Example: "DATABASES", "TABLES". If the keyword is
   # not a reserved keyword, add it to the 'nonReservedKeywords' section.
   keywords: [
     "MULTI"
+    "ARRAY_WRAPPER"
   ]
 
   nonReservedKeywordsToAdd: [
     "MULTI"
+    "ARRAY_WRAPPER"
   ]
 
   # List of additional join types. Each is a method with no arguments.

@@ -1048,6 +1048,9 @@ public enum SqlKind {
   /** {@code DROP TYPE} DDL statement. */
   DROP_TYPE,
 
+  /** {@code ARRAY WRAPPER} Wrap all fields array of original type. */
+  Array_Wrapper,
+
   /** {@code CREATE FUNCTION} DDL statement. */
   CREATE_FUNCTION,
 
