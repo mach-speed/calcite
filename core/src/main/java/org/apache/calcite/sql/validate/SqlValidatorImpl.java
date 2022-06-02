@@ -2619,9 +2619,10 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
 
     case ARRAY_WRAPPER:
       SqlArrayWrapper wrapper = (SqlArrayWrapper) node;
-      ArrayWrapperScope arrayWrapperScope = new ArrayWrapperScope(parentScope, usingScope, wrapper);
-      ArrayWrapperNamespace arrayWrapperNamespace = new ArrayWrapperNamespace(this, enclosingNode
-          , wrapper);
+      ArrayWrapperScope arrayWrapperScope =
+          new ArrayWrapperScope(parentScope, usingScope, wrapper);
+      ArrayWrapperNamespace arrayWrapperNamespace =
+          new ArrayWrapperNamespace(this, enclosingNode, wrapper);
       registerNamespace(usingScope, alias, arrayWrapperNamespace, false);
       scopes.put(wrapper, arrayWrapperScope);
 
@@ -2638,7 +2639,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
           lateral
       );
       if (newOperand != wrapperInput) {
-        wrapper.setOperand(0,newOperand);
+        wrapper.setOperand(0, newOperand);
       }
       return newNode;
     default:
