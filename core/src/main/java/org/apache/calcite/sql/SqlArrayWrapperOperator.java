@@ -34,8 +34,8 @@ public class SqlArrayWrapperOperator extends SqlOperator {
 
   @Override public void unparse(SqlWriter writer, SqlCall call, int leftPrec, int rightPrec) {
     final SqlArrayWrapper wrapper = (SqlArrayWrapper) call;
-    writer.keyword("ARRAY_WRAPPER");
     wrapper.input.unparse(writer, leftPrec, rightPrec);
+    writer.keyword("ARRAY_WRAPPER");
   }
 
   @Override public SqlCall createCall(@Nullable SqlLiteral functionQualifier, SqlParserPos pos,
