@@ -2753,6 +2753,10 @@ public class RelBuilder {
     return join(joinType, condition, ImmutableSet.of());
   }
 
+  public RelBuilder arrayWrapper(RexNode condition) {
+    return join(JoinRelType.INNER, condition, ImmutableSet.of());
+  }
+
   /** Creates a {@link Join} with correlating variables. */
   public RelBuilder join(JoinRelType joinType, RexNode condition,
       Set<CorrelationId> variablesSet) {

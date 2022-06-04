@@ -95,6 +95,7 @@ import org.apache.calcite.schema.Wrapper;
 import org.apache.calcite.sql.JoinConditionType;
 import org.apache.calcite.sql.JoinType;
 import org.apache.calcite.sql.SqlAggFunction;
+import org.apache.calcite.sql.SqlArrayWrapper;
 import org.apache.calcite.sql.SqlBasicCall;
 import org.apache.calcite.sql.SqlCall;
 import org.apache.calcite.sql.SqlCallBinding;
@@ -2227,6 +2228,9 @@ public class SqlToRelConverter {
       convertIdentifier(bb, (SqlIdentifier) from, null, null);
       return;
 
+    case ARRAY_WRAPPER:
+      convertArrayWrapper(bb, (SqlArrayWrapper) from);
+      return;
     case EXTEND:
       call = (SqlCall) from;
       final SqlNode operand0 = call.getOperandList().get(0);
@@ -2276,6 +2280,26 @@ public class SqlToRelConverter {
     default:
       throw new AssertionError("not a join operator " + from);
     }
+  }
+
+  private void convertArrayWrapper(Blackboard bb, SqlArrayWrapper wrapper) {
+    SqlNode input = wrapper.getInput();
+    SqlValidatorScope innerScope = Util.first(
+        validator().getJoinScope(input),
+        ((DelegatingScope) bb.scope()).getParent());
+    final Blackboard innerBlackboard = new Blackboard(innerScope, null,false);
+    convertFrom(innerBlackboard, input);
+    final RelNode innerRel = requireNonNull(innerBlackboard.root, "innerBlackboard.root");
+
+    final RelNode result = createArrayWrapper(
+        bb,
+        innerRel
+    );
+    bb.setRoot(result, true);
+  }
+
+  private RelNode createArrayWrapper(Blackboard bb, RelNode innerRel) {
+    return null;
   }
 
   private void convertUnnest(Blackboard bb, SqlCall call, @Nullable List<String> fieldNames) {

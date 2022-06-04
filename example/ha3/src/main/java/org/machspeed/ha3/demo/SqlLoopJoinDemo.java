@@ -33,6 +33,7 @@ import org.apache.calcite.prepare.Prepare;
 import org.apache.calcite.rel.RelNode;
 import org.apache.calcite.rel.RelRoot;
 import org.apache.calcite.rel.rules.CoreRules;
+import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.rex.RexBuilder;
 import org.apache.calcite.sql.SqlNode;
@@ -66,25 +67,51 @@ public class SqlLoopJoinDemo {
         "select pv_id, user_id, ids, x, y "
             + " from backbone as mt "
             + " LEFT MULTI JOIN "
-            + "feature ARRAY_WRAPPER as ft "
+            + "seqF ARRAY_WRAPPER as ft "
             + " ON mt.ids >> ft.id ";
+//    final String sql =
+//        "select pv_id, user_id, ux, uy "
+//            + " from backbone as mt"
+//            + " LEFT JOIN "
+//            + " userF as uft "
+//            + " ON mt.user_id = uft.uid ";
 
 
     RelDataTypeFactory typeFactory = new JavaTypeFactoryImpl();
 
+    RelDataType varcharType = typeFactory.createSqlType(SqlTypeName.VARCHAR);
+    RelDataType integerType = typeFactory.createSqlType(SqlTypeName.VARCHAR);
+    RelDataType varcharArrayType = typeFactory.createArrayType(varcharType, -1);
     SimpleTable backbone = SimpleTable
         .newBuilder("backbone")
-        .addField("pv_id",
-        typeFactory.createSqlType(SqlTypeName.VARCHAR)).addField("user_id",
-        typeFactory.createSqlType(SqlTypeName.VARCHAR)).addField("ids",
-        typeFactory.createArrayType(
-            typeFactory.createSqlType(SqlTypeName.VARCHAR), -1)).withRowCount(10).build();
+        .addField("pv_id", varcharType)
+        .addField("user_id", varcharType)
+        .addField("ids", varcharArrayType)
+        .withRowCount(10)
+        .build();
 
-    SimpleTable feature =
-        SimpleTable.newBuilder("feature").addField("id", SqlTypeName.VARCHAR).addField("x",
-            SqlTypeName.VARCHAR).addField("y", SqlTypeName.INTEGER).withRowCount(10).build();
+    SimpleTable seqF = SimpleTable
+        .newBuilder("userF")
+        .addField("uid", varcharType)
+        .addField("ux", varcharType)
+        .addField("uy", integerType)
+        .withRowCount(10)
+        .build();
 
-    SimpleSchema schema = SimpleSchema.newBuilder("s").addTable(backbone).addTable(feature).build();
+    SimpleTable userF = SimpleTable
+        .newBuilder("seqF")
+        .addField("id", varcharType)
+        .addField("x", varcharType)
+        .addField("y", integerType)
+        .withRowCount(10)
+        .build();
+
+    SimpleSchema schema = SimpleSchema
+        .newBuilder("s")
+        .addTable(backbone)
+        .addTable(seqF)
+        .addTable(userF)
+        .build();
 
     CalciteSchema rootSchema = CalciteSchema.createRootSchema(false, false);
     rootSchema.add(schema.getSchemaName(), schema);
