@@ -50,6 +50,7 @@ import org.apache.calcite.rel.hint.HintStrategyTable;
 import org.apache.calcite.rel.hint.Hintable;
 import org.apache.calcite.rel.hint.RelHint;
 import org.apache.calcite.rel.logical.LogicalAggregate;
+import org.apache.calcite.rel.logical.LogicalArrayWrapper;
 import org.apache.calcite.rel.logical.LogicalCorrelate;
 import org.apache.calcite.rel.logical.LogicalFilter;
 import org.apache.calcite.rel.logical.LogicalIntersect;
@@ -2299,7 +2300,10 @@ public class SqlToRelConverter {
   }
 
   private RelNode createArrayWrapper(Blackboard bb, RelNode innerRel) {
-    return null;
+    return relBuilder
+        .push(innerRel)
+        .arrayWrapper()
+        .build();
   }
 
   private void convertUnnest(Blackboard bb, SqlCall call, @Nullable List<String> fieldNames) {

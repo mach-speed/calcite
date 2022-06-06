@@ -58,6 +58,7 @@ import org.apache.calcite.rel.core.Union;
 import org.apache.calcite.rel.core.Values;
 import org.apache.calcite.rel.hint.Hintable;
 import org.apache.calcite.rel.hint.RelHint;
+import org.apache.calcite.rel.logical.LogicalArrayWrapper;
 import org.apache.calcite.rel.logical.LogicalFilter;
 import org.apache.calcite.rel.logical.LogicalProject;
 import org.apache.calcite.rel.metadata.RelColumnMapping;
@@ -2753,8 +2754,19 @@ public class RelBuilder {
     return join(joinType, condition, ImmutableSet.of());
   }
 
-  public RelBuilder arrayWrapper(RexNode condition) {
-    return join(JoinRelType.INNER, condition, ImmutableSet.of());
+  public RelBuilder arrayWrapper() {
+    Frame inputFrame = stack.pop();
+    LogicalArrayWrapper wrapper = LogicalArrayWrapper.create(inputFrame.rel);
+    List<RelDataTypeField> fieldList = wrapper.getRowType().getFieldList();
+    final ImmutableList.Builder<Field> fields = ImmutableList.builder();
+    ImmutableList<Field> inputFields = inputFrame.fields;
+    int size = inputFields.size();
+    for (int i = 0; i < size; i++) {
+      assert inputFields.get(i).left != null;
+      fields.add(new Field(inputFields.get(i).left, fieldList.get(i)));
+    }
+    stack.push(new Frame(wrapper, fields.build()));
+    return this;
   }
 
   /** Creates a {@link Join} with correlating variables. */
