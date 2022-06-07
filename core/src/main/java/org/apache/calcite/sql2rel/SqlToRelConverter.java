@@ -50,7 +50,6 @@ import org.apache.calcite.rel.hint.HintStrategyTable;
 import org.apache.calcite.rel.hint.Hintable;
 import org.apache.calcite.rel.hint.RelHint;
 import org.apache.calcite.rel.logical.LogicalAggregate;
-import org.apache.calcite.rel.logical.LogicalArrayWrapper;
 import org.apache.calcite.rel.logical.LogicalCorrelate;
 import org.apache.calcite.rel.logical.LogicalFilter;
 import org.apache.calcite.rel.logical.LogicalIntersect;
@@ -2288,7 +2287,7 @@ public class SqlToRelConverter {
     SqlValidatorScope innerScope = Util.first(
         validator().getJoinScope(input),
         ((DelegatingScope) bb.scope()).getParent());
-    final Blackboard innerBlackboard = new Blackboard(innerScope, null,false);
+    final Blackboard innerBlackboard = new Blackboard(innerScope, null, false);
     convertFrom(innerBlackboard, input);
     final RelNode innerRel = requireNonNull(innerBlackboard.root, "innerBlackboard.root");
 

@@ -14,10 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.calcite.rel.logical;
-
-import com.google.common.collect.ImmutableList;
 
 import org.apache.calcite.plan.RelOptCluster;
 import org.apache.calcite.plan.RelTraitSet;
@@ -26,15 +23,14 @@ import org.apache.calcite.rel.SingleRel;
 import org.apache.calcite.rel.hint.Hintable;
 import org.apache.calcite.rel.hint.RelHint;
 import org.apache.calcite.rel.type.RelDataType;
-
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
-/*
-  * Wrap the input
+/**
+ * <code>LogicalArrayWrapper</code> wrap its input type.
  */
 public class LogicalArrayWrapper extends SingleRel implements Hintable {
 
@@ -44,7 +40,7 @@ public class LogicalArrayWrapper extends SingleRel implements Hintable {
    * Creates a <code>SingleRel</code>.
    *
    * @param cluster Cluster this relational expression belongs to
-   * @param traits
+   * @param traits  TraitSet
    * @param input   Input relational expression
    */
   protected LogicalArrayWrapper(RelOptCluster cluster, RelTraitSet traits, RelNode input) {
